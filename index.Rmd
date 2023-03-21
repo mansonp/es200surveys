@@ -458,7 +458,7 @@ class: center, middle, inverse
 - `r ji("truck")` Accessing Existing Survey Datasets
 - `r ji("basket")` Loading into R and Wrangling
 - `r ji("compass")` Exploring the Data
-- `r ji("bar_chart")` Analyze Data
+- `r ji("bar_chart")` Analyze and Present Data
 - `r ji("building_construction")` Designing in Qualtrics
 
 ---
@@ -472,11 +472,33 @@ p_load(srvyr, gtsummary, sjmisc, haven, tidyverse)
 
 nsee2017 <- read_sav("data/nsee2017.sav")
 
-nsee2017 %>%
-   select(worldviews_trump, Weight) %>% # Select the Variables and include Weight!
+gw_table <- nsee2017 %>%
+   select(gw_belief, Weight) %>% #<<
    mutate(across(where(is.labelled), ~as_factor(.x) %>% fct_drop)) %>%
-   as_survey_design(weight=Weight) %>%
+   as_survey_design(weight=Weight) %>% 
    tbl_svysummary(include=-Weight, missing = "no") %>%
    as_kable_extra()
 
 ```
+---
+# The Results
+
+```{r gw_table, echo=FALSE}
+gw_table
+```
+
+---
+
+# RMarkdown Basics
+
+
+
+
+---
+
+# Assignment Instructions
+
+## Select several variables and conduct some initial exploratory data work
+
+
+---
