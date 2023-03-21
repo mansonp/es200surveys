@@ -33,9 +33,14 @@ layout: true
 <div class="my-footer"><img src="./img/logo/reed-college-griffin-red.svg" style="height: 60px;"/></div> 
 
 ---
+
+class: center, middle, inverse
+
+# Day One: Introduction to Survey Methodology
+---
 <div class="my-footer"><img src="./img/logo/reed-college-griffin-red.svg" style="height: 60px;"/></div> 
 
-# Outline
+# Day One Outline
 
 - `r ji("spy")` Why: Motivations for Surveys and Theory
 - `r ji("phone")` Who: Sampling and Recruitment Challenges
@@ -414,5 +419,44 @@ background-size: 600pt
 
 # You Made It! `r emo::ji("trophy")`
 
+---
+# Preview on Analysis
 
+## Response Rates and Weights
+
+- Even if we draw the perfect sample, we miss some people.
+- Use of weights to adjust results to capture over and under-representation
+
+## Types of Weights
+
+- **Design Weights**: We might add more people we know are likely to get missed into our sample draw.
+
+- **Post-Stratification/Non-Response**: Once we have our sample, we can adjust to match population characteristics.
+
+
+---
+
+# Discuss Survey Codebook
+
+## `r emo::ji("thinking")` What questions interested you?
+
+## `r emo::ji("wizard")` What other variables would you use to understand question responses?
+
+## `r emo::ji("juggle")` In groups: Discuss questions and analyses you might explore! (Keep these ideas, we will use them!)
+
+---
+class: center, middle, inverse
+
+# Day Two: Analyzing Survey Data
+
+---
+<div class="my-footer"><img src="./img/logo/reed-college-griffin-red.svg" style="height: 60px;"/></div> 
+
+# Day Two Outline
+
+- `r ji("truck")` Accessing Existing Survey Datasets
+- `r ji("basket")` Loading into R and Wrangling
+- `r ji("compass")` Exploring the Data
+- `r ji("bar_chart")` Analyze Data
+- `r ji("building_construction")` Designing in Qualtrics
 
