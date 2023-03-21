@@ -51,7 +51,7 @@ class: center, middle, inverse
 
 # Day One Outline
 
-- 🕵️‍♀️ Why: Motivations for Surveys and Theory
+- 🕵 Why: Motivations for Surveys and Theory
 - ☎️ Who: Sampling and Recruitment Challenges
 - 💪 Where and How: Administering Surveys
 - ✅ What: Basics in Survey Design
@@ -104,7 +104,7 @@ background-size: 600pt
 
 --
 
-- 🌎 Climate change beliefs are determined by party identification
+- 🌍 Climate change beliefs are determined by party identification
 
 - 🌲 Support for protecting natural areas is predicted by frequent visitation or use
 
@@ -120,7 +120,7 @@ background-size: 600pt
 
 --
 
--  🌏 Do you believe climate change is happening? ➡️ &lt;br&gt; **Varies by party identification**&lt;br&gt; 
+-  🌐 Do you believe climate change is happening? ➡️ &lt;br&gt; **Varies by party identification**&lt;br&gt; 
 
 -  🌲 Willingness to pay for protecting open space, expressed in dollars.  ➡️ &lt;br&gt; **Varies by visit frequency** 
 -  🐳 Hypothetical vote for expanding marine protected areas ➡️ &lt;br&gt; **Varies by perception on marine health** 
@@ -168,7 +168,7 @@ Census can be less accurate if it has systematic errors in coverage that the sam
 ## Remember Unit of Analysis
 
 - Is it the individual? The household? A firm or organization?
--
+
    
 ## Sources of Error
 
@@ -552,6 +552,62 @@ class: center, middle, inverse
 - 📊 Analyze Data
 - 🏗 Designing in Qualtrics
 
+---
+
+# Exploring Climate Attitudes
+
+
+```r
+library(pacman)
+p_load(srvyr, gtsummary, sjmisc, haven, tidyverse)
+
+
+nsee2017 &lt;- read_sav("data/nsee2017.sav")
+
+nsee2017 %&gt;%
+   select(worldviews_trump, Weight) %&gt;% # Select the Variables and include Weight!
+   mutate(across(where(is.labelled), ~as_factor(.x) %&gt;% fct_drop)) %&gt;%
+   as_survey_design(weight=Weight) %&gt;%
+   tbl_svysummary(include=-Weight, missing = "no") %&gt;%
+   as_kable_extra()
+```
+
+&lt;table style="NAborder-bottom: 0;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Characteristic &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; N = 929 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Agreement with Donald Trump on important issues facing the country today &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; All or nearly all issues &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 92 (10%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Many, but not all issues &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 165 (18%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; A few issues &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 240 (26%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; No or almost no issues &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 396 (43%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Not sure &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 23 (2.5%) &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;tfoot&gt;&lt;tr&gt;&lt;td style="padding: 0; " colspan="100%"&gt;
+&lt;sup&gt;1&lt;/sup&gt; n (%)&lt;/td&gt;&lt;/tr&gt;&lt;/tfoot&gt;
+&lt;/table&gt;
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

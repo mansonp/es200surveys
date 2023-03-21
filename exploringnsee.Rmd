@@ -1,0 +1,55 @@
+---
+title: "Ypur Title"
+author: "Your Name"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(haven) # This lets you read in SPSS data formats (and others)
+library(dplyr) # This lets you wrangle data and reshape it
+library(srvyr) # This works with complex survey objects
+library(forcats) # This helps change the levels of responses
+library(gtsummary) # This makes pretty tables!
+library(kableExtra) # This makes pretty tables more customized!
+library(sjmisc) # This helps manage the SPSS data
+```
+
+## Header with Description of What Comes Next
+
+
+
+```{r pressure, echo=FALSE}
+
+
+
+nsee2017 <- read_sav("data/nsee2017.sav")
+
+nsee2017 %>%
+   select(worldviews_trump,demog_gender, Weight) %>% # Select the Variables and include Weight!
+   mutate(across(where(is.labelled), ~as_factor(.x) %>% fct_drop)) %>%
+   as_survey_design(weight=Weight) %>%
+   tbl_svysummary(include=-Weight, by=demog_gender, missing = "no") %>%
+   as_kable_extra(
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "") %>%
+   column_spec(1, width = "20em")
+
+nsee2017 %>%
+   select(worldviews_trump,demog_gender, Weight) %>% # Select the Variables and include Weight!
+   mutate(across(where(is.labelled), ~as_factor(.x) %>% fct_drop)) %>%
+   mutate(noweight = 1) %>%
+   as_survey_design(weight=noweight) %>%
+   tbl_svysummary(include=-c(Weight, noweight), by=demog_gender, missing = "no") %>%
+   as_kable_extra(
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "") %>%
+   column_spec(1, width = "20em")
+
+
+```
+

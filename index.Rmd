@@ -22,7 +22,8 @@ output:
 ```{r setup, include=FALSE}
 options(htmltools.dir.version = FALSE)
 library(pacman)
-p_load(emo, readxl, knitr, kableExtra)
+p_load(emo, readxl, knitr, kableExtra,
+       pollster, sjmisc, sjlabelled, install = TRUE)
 
 
 ```
@@ -159,7 +160,7 @@ Census can be less accurate if it has systematic errors in coverage that the sam
 ## Remember Unit of Analysis
 
 - Is it the individual? The household? A firm or organization?
--
+
    
 ## Sources of Error
 
@@ -460,3 +461,22 @@ class: center, middle, inverse
 - `r ji("bar_chart")` Analyze Data
 - `r ji("building_construction")` Designing in Qualtrics
 
+---
+
+# Exploring Climate Attitudes
+
+```{r gw_intro, echo=TRUE}
+library(pacman)
+p_load(srvyr, gtsummary, sjmisc, haven, tidyverse)
+
+
+nsee2017 <- read_sav("data/nsee2017.sav")
+
+nsee2017 %>%
+   select(worldviews_trump, Weight) %>% # Select the Variables and include Weight!
+   mutate(across(where(is.labelled), ~as_factor(.x) %>% fct_drop)) %>%
+   as_survey_design(weight=Weight) %>%
+   tbl_svysummary(include=-Weight, missing = "no") %>%
+   as_kable_extra()
+
+```
