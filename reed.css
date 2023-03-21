@@ -108,7 +108,7 @@ blockquote {
 
 /* Add image and change bg color */
 
-/* changing background image to ScPo*/
+/* changing background image to Reed*/
 .title-slide {
   background-image: url("./img/logo/reed-college-griffin-red.svg");
   background-position: 9% 30%;
@@ -151,6 +151,13 @@ blockquote {
   margin: 0px;
   line-height: 1;
 }
+
+/* Body Font Size */
+.remark-slide-content {
+  font-size: 26px;
+}
+
+
 
 /* Remove slide count */
 .title-slide .remark-slide-number {

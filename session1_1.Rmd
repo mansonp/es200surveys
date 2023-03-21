@@ -1,0 +1,418 @@
+---
+title: "Exploring Survey Methods"
+subtitle: "ES 200: Introduction to Environmental Studies"
+author: "Paul Manson"
+date: "April 4, 2023"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: ["default", "reed.css", "reed-fonts.css"]
+    nature:
+      beforeInit: ["js/ru_xaringan.js"]
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: "16:9"
+    includes:
+      in_header: "./libs/partials/header.html"
+---
+
+
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+library(pacman)
+p_load(emo, readxl, knitr, kableExtra)
+
+
+```
+
+
+layout: true
+  
+<div class="my-footer"><img src="./img/logo/reed-college-griffin-red.svg" style="height: 60px;"/></div> 
+
+---
+<div class="my-footer"><img src="./img/logo/reed-college-griffin-red.svg" style="height: 60px;"/></div> 
+
+# Outline
+
+- `r ji("spy")` Why: Motivations for Surveys and Theory
+- `r ji("phone")` Who: Sampling and Recruitment Challenges
+- `r ji("muscle")` Where and How: Administering Surveys
+- `r ji("check")` What: Basics in Survey Design
+- `r ji("bar_chart")` Analyze Data
+
+---
+background-image: url("img/survey_overview.png")
+background-position: 50% 50%
+background-size: 700pt
+
+---
+background-image: url("img/tsunamisurvey.png")
+background-position: 85% 80%
+background-size: 350pt
+# What Are Surveys?
+
+- Qualitative AND/OR Quantitative
+- Many Types: Interviews, Questionnaires
+- Respondent Focus - Who Completes Them
+- Many Modes: In-person, Door-to-Door, Intercept, Mail, Phone, Online
+- Allow for inferences from Sample to Population
+
+--
+
+###When Not to Use Surveys
+
+- Research Questions are Emergent
+- Various Sources of <br> Bias or Error Overwhelm
+- Population Hard to Reach
+
+
+---
+background-image: url("img/survey_overview.png")
+background-position: 50% 90%
+background-size: 600pt
+
+# First: The Why
+
+---
+background-image: url("img/theory_obs.png")
+background-position: 50% 80%
+background-size: 600pt
+# The Why: Theory Rules Everything
+
+
+---
+# The Why: Developing Causal Relationships
+
+## `r emo::ji("thinking")` What is a cause and effect you are interested in? What is the Theory?
+
+--
+
+- `r emo::ji("earth")` Climate change beliefs are determined by party identification
+
+- `r emo::ji("evergreen_tree")` Support for protecting natural areas is predicted by frequent visitation or use
+
+- `r emo::ji("whale")` Support for marine protected areas is driven by concerns over loss of marine health
+
+- Other ideas?
+
+---
+
+# The Why: Developing Causal Relationships
+
+## `r emo::ji("thinking")` What would you ask to test these relationships?
+
+--
+
+-  `r emo::ji("earth")` Do you believe climate change is happening? `r emo::ji("right_arrow")` <br> **Varies by party identification**<br> 
+
+-  `r emo::ji("evergreen_tree")` Willingness to pay for protecting open space, expressed in dollars.  `r emo::ji("right_arrow")` <br> **Varies by visit frequency** 
+-  `r emo::ji("whale")` Hypothetical vote for expanding marine protected areas `r emo::ji("right_arrow")` <br> **Varies by perception on marine health** 
+
+- Other ideas?
+---
+background-image: url("img/survey_overview.png")
+background-position: 50% 90%
+background-size: 600pt
+
+# Second: The Who
+---
+background-image: url("https://media.giphy.com/media/l2JedkI7eoVZ4HbOM/giphy.gif")
+background-position: 95% 70%
+background-size: 300pt
+
+# The Who: Getting People to Participate
+
+## We *could* just ask everyone! (aka Census)
+- Time intensive
+- Expensive
+- Might actually be less accurate! (Might...)
+
+## Sampling Approaches
+- Random 
+   - Pure Random, Stratified, Systematic
+- Purposive and Quota 
+- Intercept
+- Snowball 
+- Convenience 
+
+???
+
+Census can be less accurate if it has systematic errors in coverage that the sample approach can directly address!
+
+---
+# Sample Method Drives Inferences
+
+- Random sample allows for inference from sample to population
+- Samples need to be carefully drawn:
+   - **Population**: (Universe) Definition: Who do we want to Represent?
+   - **Frame**: How we Find our Sample
+   - **Sample**: Drawn from Frame, assuming proper *coverage*
+   
+## Remember Unit of Analysis
+
+- Is it the individual? The household? A firm or organization?
+-
+   
+## Sources of Error
+
+- **Coverage Error**: The Frame has a mismatch!
+- **Sampling Error**: Size, Response Rates
+   
+---
+background-image: url("img/sampling.png")
+background-position: 50% 75%
+background-size: 650pt
+# The Who: Sampling and Recruitment
+
+---
+# How Many Surveys Do we Need?
+
+```{r sample, echo=FALSE}
+
+dillmansamplesize <- read_excel("data/dillmansamplesize.xlsx", 
+    col_types = c("text", "numeric", "numeric", 
+        "numeric", "numeric", "numeric", 
+        "numeric")) 
+
+dillmansamplesize %>%
+   kbl(col.names = c("Population Size",
+                     "50-50",
+                      "80-20",
+                      "50-50",
+                      "80-20",
+                      "50-50",
+                      "80-20")) %>%
+   kable_styling() %>%
+   add_header_above(c("95% Conf Level " = 1, "10% MOE" = 2, "5% MOE" = 2, "3% MOE" = 2)) %>%
+   column_spec(1, width = "30em") %>%
+   column_spec(2:7, width = "20em") %>%
+   footnote(general = "From Dillman et al 2009", general_title = "")
+```
+
+???
+The confidence interval is the plus-or-minus figure usually reported in newspaper or television opinion poll results. For example, if you use a confidence interval of 4 and 47% percent of your sample picks an answer you can be “sure” that if you had asked the question of the entire relevant population between 43% (47-4) and 51% (47+4) would have picked that answer.
+
+The confidence level tells you how sure you can be. It is expressed as a percentage and represents how often the true percentage of the population who would pick an answer that lies within the confidence interval. The 95% confidence level means you can be 95% certain; the 99% confidence level means you can be 99% certain. Most researchers work for a 95% confidence level.
+
+When you put the confidence level and the confidence interval together, you can say that you are 95% sure that the true percentage of the population is between 43% and 51%.
+
+---
+# Confidence Intervals vs Levels
+
+- **Confidence Intervals** or two times the margin of error, measures the how sure we are of the answer given.
+- **Confidence Level** measures how sure we are that the sample, if drawn again, would have the same result.
+
+**Example**: If we are working with a sample size of 384, for a population of over 10 million people, we have a 5% margin of error using the 95% confidence level.
+
+That means our confidence interval is plus or minus 5% on the sample statistic. 
+
+If 52% of the population said they were very sure climate change was happening, we would say we are **95% sure** that the true percentage is **between 47% and 57%**.
+
+If we wanted to narrow that range with the 3% margin of error, we'd **need 1067 responses** (not 384!)
+
+
+---
+background-image: url("img/survey_overview.png")
+background-position: 50% 90%
+background-size: 600pt
+
+# Next: The Where and How
+
+---
+# How: The Many Modes of Survey Administration
+
+## How we connect to Respondents
+
+- Online
+- Mail
+- Phone
+- Text/SMS
+- Web Panel
+- Door to Door
+- Intercept
+
+Each of these involve some form of **recruitment** and may use multiple ways!
+
+**Example**: Post card sent to household inviting to online survey. Follow up with paper survey for non-responses. Final phone call to explore response non-bias.
+
+---
+background-image: url("img/thesis.png")
+background-position: 98% 80%
+background-size: 300pt
+
+# How: The Many Modes of Survey Administration
+
+## How we encourage Responses
+
+- Make a Connection: Cover Letters and Design
+- Partnerships: Trusted Entities
+- Incentives
+- Use your "Student Card"
+- Consider Timing - Know your Population
+
+## Response Rates
+
+- Depends on: Non-Contact, Eligibility, <br> Partial Completion, Full Completion
+
+
+---
+background-image: url("img/survey_overview.png")
+background-position: 50% 90%
+background-size: 600pt
+
+# Finally: The What
+---
+# The Best for the Last: Questions and How to Create Them
+
+- Measurement Challenges
+- Best Practices
+- Things to Avoid
+- Connect Back to Theory
+
+## `r emo::ji("thinking")` What is a Survey Question you Might Ask?
+
+
+---
+
+background-image: url("img/reliable_valid.png")
+background-position: 50% 100%
+background-size: 500pt
+
+# Measurement Challenges
+
+---
+
+background-image: url("img/reliable_valid.png")
+background-position: 100% 75%
+background-size: 350pt
+
+# Measurement Challenges
+
+
+- Are we measuring what we want to measure (**Validity**)?
+- Are we successful when repeatedly using the measure (**Reliability**)?
+
+## Some examples
+
+- High Validity and High Reliability: <br> **Respondent's age**
+- High Validity and Low Reliability: <br> **Assess classroom inclusion and climate**
+- Low Validity and High Reliability: <br> **Are you racist?**
+- Low Validity and Low Reliability: <br> **Do you support strenological expansion?**
+
+
+
+
+???
+
+"Strenological expansion" is made up. But its an example of things we could get very wrong if we focus on wonky ideas.
+
+---
+
+# Types of Questions
+
+- Open Ended Questions: Text entry or "in their own words"
+- Closed-Ended: Choices are pre-determined
+
+- Other
+   - Image Based
+   - Participatory GIS
+   - Text Interactions
+   
+   
+---
+
+# Choices on Question Design
+
+.pull-left[
+## Open-Ended
+- Information rich (Good and Bad!)
+- Does not prejudge right response
+- Allows for uncertainty, where researcher does not know what to expect
+- A **lot** of work to analyze
+]
+
+.pull-right[
+## Close-Ended
+- Researcher can control responses (analysis strength)
+- Comparisons are easier
+- Quicker for respondent
+- You have to be very careful on choices you offer!
+]
+---
+
+# Types of Close-Ended Questions
+
+- Dichotomous
+   - Yes or No, Checkbox Questions
+- Categorical
+   - Often demographic or descriptive
+- Ordinal (or acting like it!)
+   - Likert scale questions: Strongly Agree to Strongly Disagree
+- Ratio (rare)
+   - Money, thermometers, scales with sliders
+   
+---
+
+# Anatomy of a Question (aka Item)
+
+- Introduction
+- Stem
+- Response Options
+   - Scale
+   - Anchors
+   - Odd vs Even Scales (5-pt or 4-pt)
+   - Don't Know or Refusal Options
+- Presentation Order
+   - Questions can be randomized, or reversed
+   - Scale can be randomized, or reversed
+- Skip or Presentation Logic
+   - Present questions based on other responses (aka Fork)
+- Soft Requires and Hard Requires
+   - Soft: Respondent offerred a second chance if they skip
+   - Hard: Respondent can not proceed without answer (consent examople)
+   
+
+
+---
+
+# Danger! Things to Avoid! `r emo::ji("dead")`
+
+- Double Barrel Questions:<br> "Do you agree Renn Fayre is safe and fun?"
+
+- Biased Questions:<br> "Do you support climate heroes working to stop oil companies?"
+
+- Overly Leading: <br> "Do you love Reed College?"
+
+- Ambiguous or Jargon-loaded:<br> "Do you never oppose fracking on BLM lands?"
+
+- Mis-matched Stem and Response Options: <br> "Do you recycle at home? Every week, occsasisionally, never."
+
+- Unbalanced Response Options:<br> "Disagree, Neither Agree nor Disasgree, Agree, Stronly Agree"
+
+---
+
+# Awesome! Things to Definately Do! `r emo::ji("heart")`
+
+- Use Visual Design<br> White space, approachable design or colors, images.
+
+- Language and Accessibility:<br> Can everyone in your population participate? Translation or other tools to help with accessibility?
+
+- Make the Benefit Clear: <br> How can your research change the world?
+
+- Incentives: Small tokens go a long way. Can be raffle or payment for all.
+
+- Do no Harm:<br> Remember your ethical obligations, do no harm to respondents
+
+---
+
+background-image: url("img/survey_overview.png")
+background-position: 50% 90%
+background-size: 600pt
+
+# You Made It! `r emo::ji("trophy")`
+
+
+
