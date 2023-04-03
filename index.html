@@ -51,7 +51,7 @@ class: center, middle, inverse
 
 # Day One Outline
 
-- 🕵 Why: Motivations for Surveys and Theory
+- 🕵️‍♀️ Why: Motivations for Surveys and Theory
 - ☎️ Who: Sampling and Recruitment Challenges
 - 💪 Where and How: Administering Surveys
 - ✅ What: Basics in Survey Design
@@ -104,7 +104,7 @@ background-size: 600pt
 
 --
 
-- 🌎 Climate change beliefs are determined by party identification
+- 🌍 Climate change beliefs are determined by party identification
 
 - 🌲 Support for protecting natural areas is predicted by frequent visitation or use
 
@@ -536,43 +536,82 @@ background-size: 600pt
 
 ## 🤹 In groups: Discuss questions and analyses you might explore! (Keep these ideas, we will use them!)
 
----
-class: center, middle, inverse
-
-# Day Two: Analyzing Survey Data
-
----
-&lt;div class="my-footer"&gt;&lt;img src="./img/logo/reed-college-griffin-red.svg" style="height: 60px;"/&gt;&lt;/div&gt; 
-
-# Day Two Outline
-
-- 🚚 Accessing Existing Survey Datasets
-- 🧺 Loading into R and Wrangling
-- 🧭 Exploring the Data
-- 📊 Analyze and Present Data
-- 🏗 Designing in Qualtrics
 
 ---
 
-# Exploring Climate Attitudes
+# Assignment Instructions
+
+## Select variables and conduct some initial exploratory data work
+
+* Visit Moodle and download the `es200surveys.zip` file. 
+* Upload this zip file to Rstudio Server
+* Open up the Rmarkdown file inside!
+* Create your own Rmarkdown file
+
+## For this week: Turn in a PDF from your own Rmarkdown analysis
+
+
+---
+
+# Analysis Steps: Load Data
 
 
 ```r
-library(pacman)
-p_load(srvyr, gtsummary, sjmisc, haven, tidyverse)
-
-
 nsee2017 &lt;- read_sav("data/nsee2017.sav")
-
-gw_table &lt;- nsee2017 %&gt;%
-*  select(gw_belief, Weight) %&gt;%
-   mutate(across(where(is.labelled), ~as_factor(.x) %&gt;% fct_drop)) %&gt;%
-   as_survey_design(weight=Weight) %&gt;% 
-   tbl_svysummary(include=-Weight, missing = "no") %&gt;%
-   as_kable_extra()
 ```
+
+National Surveys on Energy and Environment is a ten year survey project with data shared at ICPSR.
+
+You can explore [other versions of the survey here!](https://www.openicpsr.org/openicpsr/project/100167/version/V19/view;jsessionid=BEA21F7599EA4C02CF7F1BE14EFFCE4B)
+
 ---
-# The Results
+# 🧭 Exploring the Data
+
+Using summary commands to explore the data and see what we have! Also in Codebook.
+
+
+```r
+labelled::look_for(nsee2017)[1:7, ] # This is a command from the labelled package, the number range returns the first 7 rows
+```
+
+```
+##  pos variable           label                 col_type values               
+##  1   RSPDNUM            Respondent Number     dbl                           
+##  2   Sample             Sample Type           chr+lbl  [C] Cell             
+##                                                        [L] Land             
+##  3   version_weather_v1 Placement of weather~ chr+lbl  [A] Weather question~
+##                                                        [B] Weather question~
+##  4   version_CDR        Version and placemen~ chr+lbl  [C] With extended in~
+##                                                        [D] Without extended~
+##  5   demog_age_year     Can you please tell ~ dbl+lbl  [9999] Masked        
+##  6   AgeRecode          Age categories        dbl+lbl  [1] 18-29            
+##                                                        [2] 30-44            
+##                                                        [3] 45-64            
+##                                                        [4] Or 65 and older  
+##                                                        [98] Not Sure        
+##                                                        [99] Refused         
+##  7   demog_state        State of residence    chr
+```
+
+
+---
+# Frequency Table Code
+
+
+
+
+```r
+nsee2017 %&gt;%
+*  select(worldviews_trump, Weight) %&gt;% #&lt;&lt; Change the values here!
+   mutate(across(where(is.labelled), ~as_factor(.x) %&gt;% fct_drop)) %&gt;% # Cleans up data, leave as is
+   as_survey_design(weight=Weight) %&gt;% # Leave this as is
+   tbl_svysummary(include=-Weight, missing = "no") %&gt;% # Leave this as is
+   as_kable_extra(booktabs = TRUE, longtable = TRUE, linesep = "") %&gt;%
+   column_spec(1, width = "30em") # Changes the width of the first column
+```
+
+---
+# Exploring Attitudes
 
 &lt;table style="NAborder-bottom: 0;"&gt;
  &lt;thead&gt;
@@ -583,20 +622,188 @@ gw_table &lt;- nsee2017 %&gt;%
  &lt;/thead&gt;
 &lt;tbody&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:left;"&gt; Is there solid evidence avg temp on earth has been warming in past 4 decades &lt;/td&gt;
+   &lt;td style="text-align:left;width: 30em; "&gt; Agreement with Donald Trump on important issues facing the country today &lt;/td&gt;
    &lt;td style="text-align:center;"&gt;  &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; 1 &lt;/td&gt;
-   &lt;td style="text-align:center;"&gt; 649 (70%) &lt;/td&gt;
+   &lt;td style="text-align:left;padding-left: 2em;width: 30em; " indentlevel="1"&gt; All or nearly all issues &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 92 (10%) &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; 2 &lt;/td&gt;
-   &lt;td style="text-align:center;"&gt; 170 (18%) &lt;/td&gt;
+   &lt;td style="text-align:left;padding-left: 2em;width: 30em; " indentlevel="1"&gt; Many, but not all issues &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 165 (18%) &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
-   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; 98 &lt;/td&gt;
-   &lt;td style="text-align:center;"&gt; 108 (12%) &lt;/td&gt;
+   &lt;td style="text-align:left;padding-left: 2em;width: 30em; " indentlevel="1"&gt; A few issues &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 240 (26%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;width: 30em; " indentlevel="1"&gt; No or almost no issues &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 396 (43%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;width: 30em; " indentlevel="1"&gt; Not sure &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 23 (2.5%) &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;tfoot&gt;&lt;tr&gt;&lt;td style="padding: 0; " colspan="100%"&gt;
+&lt;sup&gt;1&lt;/sup&gt; n (%)&lt;/td&gt;&lt;/tr&gt;&lt;/tfoot&gt;
+&lt;/table&gt;
+
+## What other areas are you interested in?
+
+---
+# Two-Way Tables
+
+
+```r
+nsee2017 %&gt;%
+*  select(worldviews_trump, AgeRecode, Weight) %&gt;% # Select the Variables and include Weight!
+   mutate(across(where(is.labelled), ~as_factor(.x) %&gt;% fct_drop)) %&gt;%
+   as_survey_design(weight=Weight) %&gt;%
+*  tbl_svysummary(include=-c(Weight), by=AgeRecode, missing = "no") %&gt;%
+   as_kable_extra(
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "") %&gt;%
+   column_spec(1, width = "10em") %&gt;% # Adjusted to fit the page
+   column_spec(2:5, width = "10em") # Adjusted to fit the page
+```
+
+```
+## 39 observations missing `AgeRecode` have been removed. To include these observations, use `forcats::fct_explicit_na()` on `AgeRecode` column before passing to `tbl_svysummary()`.
+```
+---
+
+# Two-Way Tables: Results
+
+
+```
+## 39 observations missing `AgeRecode` have been removed. To include these observations, use `forcats::fct_explicit_na()` on `AgeRecode` column before passing to `tbl_svysummary()`.
+```
+
+&lt;table style="NAborder-bottom: 0;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Characteristic &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; 18-29, N = 222 &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; 30-44, N = 231 &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; 45-64, N = 252 &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; Or 65 and older, N = 190 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;width: 18em; "&gt; Agreement with Donald Trump on important issues facing the country today &lt;/td&gt;
+   &lt;td style="text-align:center;width: 5em; "&gt;  &lt;/td&gt;
+   &lt;td style="text-align:center;width: 5em; "&gt;  &lt;/td&gt;
+   &lt;td style="text-align:center;width: 5em; "&gt;  &lt;/td&gt;
+   &lt;td style="text-align:center;width: 5em; "&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;width: 18em; " indentlevel="1"&gt; All or nearly all issues &lt;/td&gt;
+   &lt;td style="text-align:center;width: 5em; "&gt; 6 (3.0%) &lt;/td&gt;
+   &lt;td style="text-align:center;width: 5em; "&gt; 17 (7.3%) &lt;/td&gt;
+   &lt;td style="text-align:center;width: 5em; "&gt; 33 (13%) &lt;/td&gt;
+   &lt;td style="text-align:center;width: 5em; "&gt; 31 (17%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;width: 18em; " indentlevel="1"&gt; Many, but not all issues &lt;/td&gt;
+   &lt;td style="text-align:center;width: 5em; "&gt; 29 (13%) &lt;/td&gt;
+   &lt;td style="text-align:center;width: 5em; "&gt; 41 (18%) &lt;/td&gt;
+   &lt;td style="text-align:center;width: 5em; "&gt; 46 (19%) &lt;/td&gt;
+   &lt;td style="text-align:center;width: 5em; "&gt; 41 (22%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;width: 18em; " indentlevel="1"&gt; A few issues &lt;/td&gt;
+   &lt;td style="text-align:center;width: 5em; "&gt; 69 (32%) &lt;/td&gt;
+   &lt;td style="text-align:center;width: 5em; "&gt; 67 (29%) &lt;/td&gt;
+   &lt;td style="text-align:center;width: 5em; "&gt; 53 (22%) &lt;/td&gt;
+   &lt;td style="text-align:center;width: 5em; "&gt; 43 (23%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;width: 18em; " indentlevel="1"&gt; No or almost no issues &lt;/td&gt;
+   &lt;td style="text-align:center;width: 5em; "&gt; 108 (49%) &lt;/td&gt;
+   &lt;td style="text-align:center;width: 5em; "&gt; 102 (44%) &lt;/td&gt;
+   &lt;td style="text-align:center;width: 5em; "&gt; 105 (42%) &lt;/td&gt;
+   &lt;td style="text-align:center;width: 5em; "&gt; 69 (37%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;width: 18em; " indentlevel="1"&gt; Not sure &lt;/td&gt;
+   &lt;td style="text-align:center;width: 5em; "&gt; 7 (3.1%) &lt;/td&gt;
+   &lt;td style="text-align:center;width: 5em; "&gt; 4 (1.7%) &lt;/td&gt;
+   &lt;td style="text-align:center;width: 5em; "&gt; 10 (4.0%) &lt;/td&gt;
+   &lt;td style="text-align:center;width: 5em; "&gt; 2 (1.3%) &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;tfoot&gt;&lt;tr&gt;&lt;td style="padding: 0; " colspan="100%"&gt;
+&lt;sup&gt;1&lt;/sup&gt; n (%)&lt;/td&gt;&lt;/tr&gt;&lt;/tfoot&gt;
+&lt;/table&gt;
+---
+class: center, middle, inverse
+
+# Day Two: Developing Our Own Surveys
+
+
+
+---
+&lt;div class="my-footer"&gt;&lt;img src="./img/logo/reed-college-griffin-red.svg" style="height: 60px;"/&gt;&lt;/div&gt; 
+
+# Day Two Outline
+
+- 🧺 Revisiting Survey Design
+- 🏗 Designing in Qualtrics
+- 🛠 Finishing Up Projects for Week
+
+---
+class: center, middle, inverse
+
+# Getting Our Hands Dirty
+
+## Some data from YOU! (and a discussion)
+## Exploring Qualtrics
+
+
+
+
+---
+# Spot Some Problems
+
+&lt;table style="NAborder-bottom: 0;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Question &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; N = 25 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Renn Fayre is a healthy and fun experience. &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Strongly disagree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 1 (4.2%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Somewhat disagree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 3 (12%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Neither agree nor disagree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 6 (25%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Somewhat agree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 9 (38%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Strongly agree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 5 (21%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Unknown &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 1 &lt;/td&gt;
   &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;tfoot&gt;&lt;tr&gt;&lt;td style="padding: 0; " colspan="100%"&gt;
@@ -605,19 +812,554 @@ gw_table &lt;- nsee2017 %&gt;%
 
 ---
 
-# RMarkdown Basics
 
+# ES300 Survey Responses: Well-being
+
+**Note**: Change in response levels, forcing a response.
+
+&lt;table style="NAborder-bottom: 0;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Question &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; N = 25 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Reed College supports my mental and physical health. &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Strongly disagree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 8 (36%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Somewhat disagree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 7 (32%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Somewhat agree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 5 (23%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Strongly agree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 2 (9.1%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Unknown &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 3 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;tfoot&gt;&lt;tr&gt;&lt;td style="padding: 0; " colspan="100%"&gt;
+&lt;sup&gt;1&lt;/sup&gt; n (%)&lt;/td&gt;&lt;/tr&gt;&lt;/tfoot&gt;
+&lt;/table&gt;
+
+---
+# ES300 Survey Responses: Well-being
+
+&lt;table style="NAborder-bottom: 0;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Question &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; N = 25 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; At Reed, academics are the most important part of the campus life. &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Strongly disagree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 0 (0%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Somewhat disagree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 2 (8.3%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Somewhat agree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 16 (67%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Strongly agree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 6 (25%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Unknown &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;tfoot&gt;&lt;tr&gt;&lt;td style="padding: 0; " colspan="100%"&gt;
+&lt;sup&gt;1&lt;/sup&gt; n (%)&lt;/td&gt;&lt;/tr&gt;&lt;/tfoot&gt;
+&lt;/table&gt;
+
+---
+
+# ES300 Survey Responses: Well-being
+
+&lt;table style="NAborder-bottom: 0;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Question &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; N = 25 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; My friends make fun or pester me when I say I can't participate in social events (e.g. party, trips, outings) due to school commitments. &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Strongly disagree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 9 (41%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Somewhat disagree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 6 (27%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Somewhat agree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 5 (23%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Strongly agree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 2 (9.1%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Unknown &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 3 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;tfoot&gt;&lt;tr&gt;&lt;td style="padding: 0; " colspan="100%"&gt;
+&lt;sup&gt;1&lt;/sup&gt; n (%)&lt;/td&gt;&lt;/tr&gt;&lt;/tfoot&gt;
+&lt;/table&gt;
+
+---
+
+# ES300 Survey Responses: Well-being
+
+&lt;table style="NAborder-bottom: 0;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Question &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; N = 25 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; In the past month I have slept as much as I need to be healthy. (More than 7 hours per night.) &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Strongly disagree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 9 (38%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Somewhat disagree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 5 (21%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Somewhat agree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 6 (25%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Strongly agree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 4 (17%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Unknown &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;tfoot&gt;&lt;tr&gt;&lt;td style="padding: 0; " colspan="100%"&gt;
+&lt;sup&gt;1&lt;/sup&gt; n (%)&lt;/td&gt;&lt;/tr&gt;&lt;/tfoot&gt;
+&lt;/table&gt;
+---
+background-image: url("https://media.giphy.com/media/xT5LMAoJCQ4JISy1Rm/giphy.gif")
+background-position: 95% 80%
+background-size: 300pt
+
+# Survey Batteries: New Ecological Paradigm
+
+- Instead of single questions, assembling a series with a **theoretical** connection.
+
+
+
+- New Ecological Paradigm asserts a series of statements can capture ecological worldviews (Dunlap and Van Liere 1978, Dunlap 2000)
+
+
+- Individual items are then combined for analysis
+
+- One dimension captures &lt;br&gt; **New Ecological Paradigm**: more ecocentric
+- Other dimension captures &lt;br&gt; **Dominant Social Paradigm**: &lt;br&gt;traditional anthropocentric view
+
+
+- Lets explore these!
 
 
 
 ---
+# Survey Batteries: New Ecological Paradigm
 
-# Assignment Instructions
+1. We are approaching the limit of the number of people the Earth can support.
 
-## Select several variables and conduct some initial exploratory data work
+3. When humans interfere with nature it often produces disastrous consequences.
+
+5. Humans are seriously abusing the environment.
+
+7. Plants and animals have as much right as humans to exist.
+
+9. Despite our special abilities, humans are still subject to the laws of nature.
+
+11. The Earth is like a spaceship with very limited room and resources.
+
+13. The balance of nature is very delicate and easily upset.
+
+15. If things continue on their present course, we will soon experience a major ecological catastrophe.
+---
+# Survey Batteries: Dominant Social Paradigm
+2. Humans have the right to modify the natural environment to suit their needs.
+
+4. Human ingenuity will insure that we do not make the Earth unlivable.
+
+6. The Earth has plenty of natural resources if we just learn how to develop them.
+
+8. The balance of nature is strong enough to cope with the impacts of modern industrial nations.
+
+10. The so-called “ecological crisis” facing humankind has been greatly exaggerated.
+
+12. Humans were meant to rule over the rest of nature.
+
+14. Humans will eventually learn enough about how nature works to be able to control it.
+
+---
+# ES300 Survey Responses: NEP
+
+&lt;table style="NAborder-bottom: 0;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; NEP Question &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; N = 25 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; We are approaching the limit of the number of people the Earth can support. &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Strongly disagree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 1 (4.2%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Somewhat disagree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 4 (17%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Neither agree nor disagree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 2 (8.3%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Somewhat agree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 11 (46%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Strongly agree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 6 (25%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Unknown &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;tfoot&gt;&lt;tr&gt;&lt;td style="padding: 0; " colspan="100%"&gt;
+&lt;sup&gt;1&lt;/sup&gt; n (%)&lt;/td&gt;&lt;/tr&gt;&lt;/tfoot&gt;
+&lt;/table&gt;
+
+---
+# ES300 Survey Responses: DSP
+
+&lt;table style="NAborder-bottom: 0;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; DSP Question &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; N = 25 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Humans have the right to modify the natural environment to suit their needs. &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Strongly disagree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 1 (4.2%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Somewhat disagree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 5 (21%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Neither agree nor disagree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 9 (38%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Somewhat agree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 8 (33%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Strongly agree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 1 (4.2%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Unknown &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;tfoot&gt;&lt;tr&gt;&lt;td style="padding: 0; " colspan="100%"&gt;
+&lt;sup&gt;1&lt;/sup&gt; n (%)&lt;/td&gt;&lt;/tr&gt;&lt;/tfoot&gt;
+&lt;/table&gt;
+
+---
+# ES300 Survey Responses: NEP
+
+&lt;table style="NAborder-bottom: 0;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; NEP Question &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; N = 25 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Humans are seriously abusing the environment. &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Strongly disagree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 0 (0%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Somewhat disagree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 0 (0%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Neither agree nor disagree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 1 (4.2%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Somewhat agree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 8 (33%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Strongly agree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 15 (62%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Unknown &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;tfoot&gt;&lt;tr&gt;&lt;td style="padding: 0; " colspan="100%"&gt;
+&lt;sup&gt;1&lt;/sup&gt; n (%)&lt;/td&gt;&lt;/tr&gt;&lt;/tfoot&gt;
+&lt;/table&gt;
+---
+# ES300 Survey Responses: DSP
+
+&lt;table style="NAborder-bottom: 0;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; DSP Question &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; N = 25 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Humans will eventually learn enough about how nature works to be able to control it. &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Strongly disagree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 7 (29%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Somewhat disagree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 8 (33%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Neither agree nor disagree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 5 (21%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Somewhat agree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 3 (12%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Strongly agree &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 1 (4.2%) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Unknown &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;tfoot&gt;&lt;tr&gt;&lt;td style="padding: 0; " colspan="100%"&gt;
+&lt;sup&gt;1&lt;/sup&gt; n (%)&lt;/td&gt;&lt;/tr&gt;&lt;/tfoot&gt;
+&lt;/table&gt;
+---
+
+# ES300 Constructing Indices
+
+
+```r
+es.class.survey %&gt;%
+   select(starts_with("nep_") &amp; ends_with("nep")) %&gt;%
+   zap_label() %&gt;%
+   pivot_longer(cols = ends_with("nep"), names_to = "Value", values_to = "Rating") %&gt;%
+   summarise_at(vars(Rating), list(mean=mean, sd=sd, max = max, min=min), na.rm = TRUE)
+```
+
+&lt;table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+&lt;caption&gt;New Ecological Paradigm&lt;/caption&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; mean &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; sd &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; max &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; min &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;width: 15em; "&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;width: 15em; "&gt; 1.1 &lt;/td&gt;
+   &lt;td style="text-align:right;width: 15em; "&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:right;width: 15em; "&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+
+
+&lt;table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+&lt;caption&gt;Dominant Social Paradigm&lt;/caption&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; mean &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; sd &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; max &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; min &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;width: 15em; "&gt; 2.4 &lt;/td&gt;
+   &lt;td style="text-align:right;width: 15em; "&gt; 1.2 &lt;/td&gt;
+   &lt;td style="text-align:right;width: 15em; "&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:right;width: 15em; "&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+background-image: url("img/pos_map.png")
+background-position: 50% 80%
+background-size: 600pt
+
+# Mapping: Positive Sentiments
+
+---
+background-image: url("img/pos_cloud.png")
+background-position: 50% 80%
+background-size: 600pt
+
+# In Your Own Words: Positive Sentiments
+
+### (Word clouds are usually evil...)
+---
+
+background-image: url("img/neg_map.png")
+background-position: 50% 80%
+background-size: 600pt
+
+# Mapping: Negative Sentiments
 
 
 ---
+background-image: url("img/neg_cloud.png")
+background-position: 50% 80%
+background-size: 600pt
+
+# In Your Own Words: Negative Sentiments
+
+### (Word clouds are usually evil...)
+---
+# A Note about Ethics
+
+Social science research (including medicine and psychology) has a troubled and racist past: Tuskegee Syphilis Study (1932-1972); Baltimore Lead Paint Study (1990s)
+
+- **Belmont Report** defines guiding ethical principles:
+   
+   - *Respect for People*: Informed consent and protection of autonomy
+   
+   - *Beneficence*: Do no harm, and balance risks and benefits of research
+   
+   - *Justice*: Reasonable, non-exploitative, and well-considered procedure. Fairness in costs and burdens.
+
+We must review any **human subjects research** with our **Institutional Research Board** (IRB)
+
+
+---
+# What is Research?
+
+"Research means a **systematic investigation**, including research development, testing, and evaluation, designed to develop or contribute to **generalizable knowledge**." [45 CFR 46.102](https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-A/part-46#46.102)
+
+## Historians get a Pass
+
+"For purposes of this part, the following activities are deemed not to be research:
+
+Scholarly and journalistic activities (e.g., oral history, journalism, biography, literary criticism, legal research, and historical scholarship), including the collection and use of information, that focus directly on the specific individuals about whom the information is collected."
+
+### Historians, Public Health, Criminal Investigations, and Homeland Security all exempted
+
+---
+# Is it Research on Human Subjects?
+
+"Human subjects research is a project that involves a living individual about whom the investigator (whether student or professional):
+
+(i) obtains information or biospecimens through interaction/intervention with the individual, and uses, studies, or analyzes the information or biospecimens; or 
+
+(ii) obtains, uses studies, analyzes, or **generates identifiable private information** or identifiable biospecimens." [45 CFR 46.102](https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-A/part-46#46.102)
+
+**Example:** 
+
+Ask a person how much a house costs - *Not* Human Subjects Research
+
+Ask a person if they would like to own a house - **Yes**, Human Subjects Research
+
+
+---
+# IRB Review
+
+Some types of research are exempt - BUT still require documentation.
+
+- Anonymous surveys (web panels a common example)
+
+- Surveys with identifiers - but mitigated by protections
+
+- Public observation
+- **Key**: Interpretation is squishy - often this is expedited to be safe at Reed.
+
+Expedited Review is more common - were the risk is no more than would be expected in daily life.
+
+
+**What are risks you can think of in research?**
+
+---
+class: center, middle, inverse
+
+# Let's Explore Qualtrics
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

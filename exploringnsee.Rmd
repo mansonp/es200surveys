@@ -1,55 +1,136 @@
 ---
-title: "Ypur Title"
-author: "Your Name"
-date: "`r Sys.Date()`"
+title: "ES 200: Exploring NSEE Survey Data"
+date: "Week 10 - 2023"
 output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-library(haven) # This lets you read in SPSS data formats (and others)
-library(dplyr) # This lets you wrangle data and reshape it
-library(srvyr) # This works with complex survey objects
-library(forcats) # This helps change the levels of responses
-library(gtsummary) # This makes pretty tables!
-library(kableExtra) # This makes pretty tables more customized!
-library(sjmisc) # This helps manage the SPSS data
+library(pacman) # This package lets you load and install packages quickly.
+
+p_load(haven, dplyr, sjmisc, labelled, srvyr, forcats, gtsummary, kableExtra)
+
+# What am I loading?!?
+
+# haven # This lets you read in SPSS data formats (and others)
+# dplyr # This lets you wrangle data and reshape it
+# sjmisc # This helps manage the SPSS data
+# labelled # Helper package for labelled data
+# srvyr # This works with complex survey objects
+# forcats # This helps change the levels of responses
+# gtsummary # This makes pretty tables!
+# kableExtra # This makes pretty tables more customized!
 ```
 
-## Header with Description of What Comes Next
+# Instructions
 
+Working in RMarkdown is a great habit to get into because your writing and analyses are easy to reproduce! No copy and paste errors, no lost scripts that create objects you forget the name of, and they are easy to share. BUT I will note there is one weakness. Sometimes troubleshooting code is easier in a script - but then make sure to move it into the RMarkdown right away. 
 
+**Assignment Instructions**: Create a new Rmarkdown file for yourself. To do this go to the `File` menu then go to `New File`. Select `R Markdown...` A new window will then open, make sure to select PDF for type. Give yourself a cool title if you want - but you can change this later. *Key*: Then copy two chunks from this file, the `setup` and `loadingdata` chunks. Then you are ready to go!
 
-```{r pressure, echo=FALSE}
+## Some tips:
 
+* Name your code chunks, this helps you navigate your document easily. But remember to make them **unique**! Code chunks start with this: ` ```{r chunkname, echo=TRUE...} ` Use the ` echo=TRUE ` for this assignment so I can see what your code looks like! But if you set to `FALSE` just the results are shown.
+* Paths to data can be relative or absolute. I recommend relative for now, if you want to go to the pro-level use the `here` package!
 
+For this week, make sure to download the data from Moodle and save it in a folder called "data". This is a good organizational habit. The Rmarkdown file can live in the root with your project file. But you are free to move that if you want to!
+
+# Conducting Our Analyses
+
+## Loading in and Inspecting data
+
+First, lets load in the data. This uses the SPSS formatted data that has `.sav` as the file extension. What makes this format attractive in the social sciences is that the variables and data are labelled. Meaning that while you might see a `3` or a `4` in the dataframe, the human-readable version is stored there too, such as `Neither Agree nor Disagree` or `Somewhat Agree`. Variables capture the questions we ask people and often have a shorthand name but labels allows the full text to be saved too! You will see how this is handy later. 
+
+```{r loadingdata, echo=TRUE}
 
 nsee2017 <- read_sav("data/nsee2017.sav")
 
-nsee2017 %>%
-   select(worldviews_trump,demog_gender, Weight) %>% # Select the Variables and include Weight!
-   mutate(across(where(is.labelled), ~as_factor(.x) %>% fct_drop)) %>%
-   as_survey_design(weight=Weight) %>%
-   tbl_svysummary(include=-Weight, by=demog_gender, missing = "no") %>%
-   as_kable_extra(
-    booktabs = TRUE,
-    longtable = TRUE,
-    linesep = "") %>%
-   column_spec(1, width = "20em")
+
+```
+
+## Exploring the Data
+
+The code below lets you peek at the variables, their levels, and the types of data stored. Explore the dataset and identify 3-4 that you are interested in.
+
+```{r viewdata}
+
+look_for(nsee2017)[1:10, ] # This is a command from the labelled package, the number range returns the first 10 rows, adjust for others.
+
+```
+
+## Step 1: Create Frequency Tables
+
+A first step in survey analysis is to calculate basic frequency tables. Lets start here. Using the variables you discovered above, run frequency tables for each. Use the code below to build the tables.
+
+The code below you can copy. I will step through what it means in class. But for your efforts, the second line with `select` is the key one to focus on. Here you select the variable to include. 
+
+**Assignment**: Create four of these frequency tables with variables you want to explore further. They can be things you want to explain (climate change attitudes) or things you think can help explain outcomes (demographics, political attitudes, etc.)
+
+
+```{r freqtable1, echo=TRUE}
 
 nsee2017 %>%
-   select(worldviews_trump,demog_gender, Weight) %>% # Select the Variables and include Weight!
-   mutate(across(where(is.labelled), ~as_factor(.x) %>% fct_drop)) %>%
-   mutate(noweight = 1) %>%
-   as_survey_design(weight=noweight) %>%
-   tbl_svysummary(include=-c(Weight, noweight), by=demog_gender, missing = "no") %>%
+   select(worldviews_trump, Weight) %>% # Change the values here!
+   mutate(across(where(is.labelled), ~as_factor(.x) %>% fct_drop)) %>% # Leave this as is
+   as_survey_design(weight=Weight) %>% # Leave this as is
+   tbl_svysummary(include=-Weight, missing = "no") %>% # Leave this as is
    as_kable_extra(
-    booktabs = TRUE,
+    booktabs = TRUE, # Makes it pretty!
     longtable = TRUE,
     linesep = "") %>%
-   column_spec(1, width = "20em")
+   column_spec(1, width = "20em") # Changes the width of the first column
 
 
 ```
 
+## Step 2: Two-Way Frequency Tables
+
+Next we will explore looking at how different type of respondents answered questions. Often we use demographic variables to explore potential influences on attitudes. In NSEE these variables start with `demog_`. 
+
+Or we might use another question to explore relationships between ideas. We might be interested in political views and policy preferences, such as agreement with Trump and disagreement with climate change policy.
+
+**Assignment**: Your job is to create at least two tables that are two-way tables with two variables.
+
+```{r twoway}
+
+
+nsee2017 %>%
+   select(worldviews_trump, AgeRecode, Weight) %>% # Select the Variables and include Weight!
+   mutate(across(where(is.labelled), ~as_factor(.x) %>% fct_drop)) %>%
+   as_survey_design(weight=Weight) %>%
+   tbl_svysummary(include=-c(Weight), by=AgeRecode, missing = "no") %>%
+   as_kable_extra(
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "") %>%
+   column_spec(1, width = "18em") %>% # Adjusted to fit the page
+   column_spec(2:5, width = "5em") # Adjusted to fit the page
+
+```
+
+## Step 3: Discussion
+
+**Assignment**: Share with us your thoughts on how you selected the variables and what you found. What more might you want to know about in these data? This is a short reflection, 300-400 words.
+
+
+
+```{r twoway_recode}
+
+
+nsee2017 %>%
+   select(worldviews_trump, AgeRecode, Weight) %>% # Select the Variables and include Weight!
+   rec(AgeRecode, rec="1,2=1 [Young]; 3,4=2 [Older]") %>%
+   mutate(across(where(is.labelled), ~as_factor(.x) %>% fct_drop)) %>%
+   mutate(noweight = 1) %>%
+   as_survey_design(weight=noweight) %>%
+   tbl_svysummary(include=-c(AgeRecode, Weight, noweight), by=AgeRecode_r, missing = "no") %>%
+   add_p() %>%
+   as_kable_extra(
+      booktabs = TRUE,
+      longtable = TRUE,
+      linesep = "") %>%
+   column_spec(1, width = "18em") %>% # Adjusted to fit the page
+   column_spec(2:5, width = "5em") # Adjusted to fit the page
+
+```

@@ -21,9 +21,11 @@ output:
 
 ```{r setup, include=FALSE}
 options(htmltools.dir.version = FALSE)
+
 library(pacman)
-p_load(emo, readxl, knitr, kableExtra,
-       pollster, sjmisc, sjlabelled, install = TRUE)
+
+p_load(emo, readxl, haven, tidyverse, sjmisc, srvyr, 
+       gtsummary, kableExtra, install = TRUE)
 
 
 ```
@@ -445,60 +447,490 @@ background-size: 600pt
 
 ## `r emo::ji("juggle")` In groups: Discuss questions and analyses you might explore! (Keep these ideas, we will use them!)
 
+
+---
+
+# Assignment Instructions
+
+## Select variables and conduct some initial exploratory data work
+
+* Visit Moodle and download the `es200surveys.zip` file. 
+* Upload this zip file to Rstudio Server
+* Open up the Rmarkdown file inside!
+* Create your own Rmarkdown file
+
+## For this week: Turn in a PDF from your own Rmarkdown analysis
+
+
+---
+
+# Analysis Steps: Load Data
+
+```{r loadingdata, echo=TRUE}
+
+nsee2017 <- read_sav("data/nsee2017.sav")
+
+```
+
+National Surveys on Energy and Environment is a ten year survey project with data shared at ICPSR.
+
+You can explore [other versions of the survey here!](https://www.openicpsr.org/openicpsr/project/100167/version/V19/view;jsessionid=BEA21F7599EA4C02CF7F1BE14EFFCE4B)
+
+---
+# `r ji("compass")` Exploring the Data
+
+Using summary commands to explore the data and see what we have! Also in Codebook.
+
+```{r viewdata}
+
+labelled::look_for(nsee2017)[1:7, ] # This is a command from the labelled package, the number range returns the first 7 rows
+
+```
+
+
+---
+# Frequency Table Code
+
+
+
+```{r nseeexplore1, echo=TRUE, results='hide'}
+nsee2017 %>%
+   select(worldviews_trump, Weight) %>% #<< Change the values here! #<< 
+   mutate(across(where(is.labelled), ~as_factor(.x) %>% fct_drop)) %>% # Cleans up data, leave as is
+   as_survey_design(weight=Weight) %>% # Leave this as is
+   tbl_svysummary(include=-Weight, missing = "no") %>% # Leave this as is
+   as_kable_extra(booktabs = TRUE, longtable = TRUE, linesep = "") %>%
+   column_spec(1, width = "30em") # Changes the width of the first column
+```
+
+---
+# Exploring Attitudes
+
+```{r nseeexplore2, echo=FALSE}
+nsee2017 %>%
+   select(worldviews_trump, Weight) %>% # Change the values here!
+   mutate(across(where(is.labelled), ~as_factor(.x) %>% fct_drop)) %>% # Leave this as is
+   as_survey_design(weight=Weight) %>% # Leave this as is
+   tbl_svysummary(include=-Weight, missing = "no") %>% # Leave this as is
+   as_kable_extra(booktabs = TRUE, longtable = TRUE, linesep = "") %>%
+   column_spec(1, width = "30em") # Changes the width of the first column
+```
+
+## What other areas are you interested in?
+
+---
+# Two-Way Tables
+
+```{r twoway, echo=TRUE, results='hide'}
+
+nsee2017 %>%
+   select(worldviews_trump, AgeRecode, Weight) %>% # Select the Variables and include Weight! #<<
+   mutate(across(where(is.labelled), ~as_factor(.x) %>% fct_drop)) %>%
+   as_survey_design(weight=Weight) %>%
+   tbl_svysummary(include=-c(Weight), by=AgeRecode, missing = "no") %>% #<<
+   as_kable_extra(
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "") %>%
+   column_spec(1, width = "10em") %>% # Adjusted to fit the page
+   column_spec(2:5, width = "10em") # Adjusted to fit the page
+
+```
+---
+
+# Two-Way Tables: Results
+
+```{r twowayresults, echo=FALSE}
+
+nsee2017 %>%
+   select(worldviews_trump, AgeRecode, Weight) %>% # Select the Variables and include Weight!
+   mutate(across(where(is.labelled), ~as_factor(.x) %>% fct_drop)) %>%
+   as_survey_design(weight=Weight) %>%
+   tbl_svysummary(include=-c(Weight), by=AgeRecode, missing = "no") %>%
+   as_kable_extra(
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "") %>%
+   column_spec(1, width = "18em") %>% # Adjusted to fit the page
+   column_spec(2:5, width = "5em") # Adjusted to fit the page
+
+```
 ---
 class: center, middle, inverse
 
-# Day Two: Analyzing Survey Data
+# Day Two: Developing Our Own Surveys
+
+
 
 ---
 <div class="my-footer"><img src="./img/logo/reed-college-griffin-red.svg" style="height: 60px;"/></div> 
 
 # Day Two Outline
 
-- `r ji("truck")` Accessing Existing Survey Datasets
-- `r ji("basket")` Loading into R and Wrangling
-- `r ji("compass")` Exploring the Data
-- `r ji("bar_chart")` Analyze and Present Data
+- `r ji("basket")` Revisiting Survey Design
 - `r ji("building_construction")` Designing in Qualtrics
+- `r ji("hammer_and_wrench")` Finishing Up Projects for Week
+
+---
+class: center, middle, inverse
+
+# Getting Our Hands Dirty
+
+## Some data from YOU! (and a discussion)
+## Exploring Qualtrics
+
+```{r importclassdata, echo=FALSE}
+
+es.class.survey <- read_sav("data/class_survey.sav")
+
+surveylabels <- sjlabelled::get_label(es.class.survey)
+
+surveylabels <- stringr::str_remove((surveylabels),
+                                    fixed("Please read the statements below and on the left. Please respond with your level of agreement with each statement. - "))
+
+surveylabels <- stringr::str_remove(surveylabels,
+                                    fixed("Please rate your agreement or disagreement with the following statements - "))
+
+surveylabels <- stringr::str_remove(surveylabels,
+                                    fixed("Please rate how you agree or disagree with the following statements:\n"))
+
+
+sjlabelled::set_label(es.class.survey) <- surveylabels
+```
+
+
+---
+# Spot Some Problems
+
+```{r rennfayre, echo=FALSE}
+
+es.class.survey %>% 
+   mutate(across(where(is.labelled), ~as_factor(.x))) %>%
+   tbl_summary(include= "rf") %>%
+   modify_header(label = "**Question**") %>%
+   as_kable_extra() %>%
+   column_spec(2, width = "10em")
+   
+
+```
 
 ---
 
-# Exploring Climate Attitudes
 
-```{r gw_intro, echo=TRUE}
-library(pacman)
-p_load(srvyr, gtsummary, sjmisc, haven, tidyverse)
+# ES300 Survey Responses: Well-being
 
+**Note**: Change in response levels, forcing a response.
 
-nsee2017 <- read_sav("data/nsee2017.sav")
+```{r wellbeing, echo=FALSE}
 
-gw_table <- nsee2017 %>%
-   select(gw_belief, Weight) %>% #<<
-   mutate(across(where(is.labelled), ~as_factor(.x) %>% fct_drop)) %>%
-   as_survey_design(weight=Weight) %>% 
-   tbl_svysummary(include=-Weight, missing = "no") %>%
-   as_kable_extra()
+es.class.survey %>% 
+   mutate(across(where(is.labelled), ~as_factor(.x))) %>%
+   tbl_summary(include= "reed_attitude_1") %>%
+   modify_header(label = "**Question**") %>%
+   as_kable_extra() %>%
+   column_spec(2, width = "10em")
+   
+
+```
+
+---
+# ES300 Survey Responses: Well-being
+
+```{r wellbeing2, echo=FALSE}
+
+es.class.survey %>% 
+   mutate(across(where(is.labelled), ~as_factor(.x))) %>%
+   tbl_summary(include= "reed_attitude_2") %>%
+   modify_header(label = "**Question**") %>%
+   as_kable_extra() %>%
+   column_spec(2, width = "10em")
+   
+
+```
+
+---
+
+# ES300 Survey Responses: Well-being
+
+```{r wellbeing3, echo=FALSE}
+
+es.class.survey %>% 
+   mutate(across(where(is.labelled), ~as_factor(.x))) %>%
+   tbl_summary(include= "reed_attitude_3") %>%
+   modify_header(label = "**Question**") %>%
+   as_kable_extra() %>%
+   column_spec(2, width = "10em")
+   
+
+```
+
+---
+
+# ES300 Survey Responses: Well-being
+
+```{r wellbeing4, echo=FALSE}
+
+es.class.survey %>% 
+   mutate(across(where(is.labelled), ~as_factor(.x))) %>%
+   tbl_summary(include= "reed_attitude_4") %>%
+   modify_header(label = "**Question**") %>%
+   as_kable_extra() %>%
+   column_spec(2, width = "10em")
+   
 
 ```
 ---
-# The Results
+background-image: url("https://media.giphy.com/media/xT5LMAoJCQ4JISy1Rm/giphy.gif")
+background-position: 95% 80%
+background-size: 300pt
 
-```{r gw_table, echo=FALSE}
-gw_table
+# Survey Batteries: New Ecological Paradigm
+
+- Instead of single questions, assembling a series with a **theoretical** connection.
+
+
+
+- New Ecological Paradigm asserts a series of statements can capture ecological worldviews (Dunlap and Van Liere 1978, Dunlap 2000)
+
+
+- Individual items are then combined for analysis
+
+- One dimension captures <br> **New Ecological Paradigm**: more ecocentric
+- Other dimension captures <br> **Dominant Social Paradigm**: <br>traditional anthropocentric view
+
+
+- Lets explore these!
+
+
+
+---
+# Survey Batteries: New Ecological Paradigm
+
+1. We are approaching the limit of the number of people the Earth can support.
+
+3. When humans interfere with nature it often produces disastrous consequences.
+
+5. Humans are seriously abusing the environment.
+
+7. Plants and animals have as much right as humans to exist.
+
+9. Despite our special abilities, humans are still subject to the laws of nature.
+
+11. The Earth is like a spaceship with very limited room and resources.
+
+13. The balance of nature is very delicate and easily upset.
+
+15. If things continue on their present course, we will soon experience a major ecological catastrophe.
+---
+# Survey Batteries: Dominant Social Paradigm
+2. Humans have the right to modify the natural environment to suit their needs.
+
+4. Human ingenuity will insure that we do not make the Earth unlivable.
+
+6. The Earth has plenty of natural resources if we just learn how to develop them.
+
+8. The balance of nature is strong enough to cope with the impacts of modern industrial nations.
+
+10. The so-called “ecological crisis” facing humankind has been greatly exaggerated.
+
+12. Humans were meant to rule over the rest of nature.
+
+14. Humans will eventually learn enough about how nature works to be able to control it.
+
+---
+# ES300 Survey Responses: NEP
+
+```{r nep1, echo=FALSE}
+
+es.class.survey %>% 
+   mutate(across(where(is.labelled), ~as_factor(.x))) %>%
+   tbl_summary(include= nep_1nep) %>%
+   modify_header(label = "**NEP Question**") %>%
+   as_kable_extra() %>%
+   column_spec(2, width = "10em")
 ```
 
 ---
+# ES300 Survey Responses: DSP
 
-# RMarkdown Basics
+```{r dsp1, echo=FALSE}
 
+es.class.survey %>% 
+   mutate(across(where(is.labelled), ~as_factor(.x))) %>%
+   tbl_summary(include= nep_2dsp) %>%
+   modify_header(label = "**DSP Question**") %>%
+   as_kable_extra() %>%
+   column_spec(2, width = "10em")
+```
 
+---
+# ES300 Survey Responses: NEP
+
+```{r nep2, echo=FALSE}
+
+es.class.survey %>% 
+   mutate(across(where(is.labelled), ~as_factor(.x))) %>%
+   tbl_summary(include= nep_5nep) %>%
+   modify_header(label = "**NEP Question**") %>%
+   as_kable_extra() %>%
+   column_spec(2, width = "10em")
+```
+---
+# ES300 Survey Responses: DSP
+
+```{r dsp2, echo=FALSE}
+
+es.class.survey %>% 
+   mutate(across(where(is.labelled), ~as_factor(.x))) %>%
+   tbl_summary(include= nep_14dsp) %>%
+   modify_header(label = "**DSP Question**") %>%
+   as_kable_extra() %>%
+   column_spec(2, width = "10em")
+```
+---
+
+# ES300 Constructing Indices
+
+```{r nepindex, results='hide'}
+
+es.class.survey %>%
+   select(starts_with("nep_") & ends_with("nep")) %>%
+   zap_label() %>%
+   pivot_longer(cols = ends_with("nep"), names_to = "Value", values_to = "Rating") %>%
+   summarise_at(vars(Rating), list(mean=mean, sd=sd, max = max, min=min), na.rm = TRUE)
+
+```
+
+```{r nepindex.pretty, echo=FALSE}
+
+es.class.survey %>%
+   select(starts_with("nep_") & ends_with("nep")) %>%
+   zap_label() %>%
+   pivot_longer(cols = ends_with("nep"), names_to = "Value", values_to = "Rating") %>%
+   summarise_at(vars(Rating), list(mean=mean, sd=sd, max = max, min=min), na.rm = TRUE) %>%
+   kbl(digits = 1, caption = "New Ecological Paradigm")%>% 
+   kable_styling(full_width = F) %>%
+   column_spec(1:4, width = "15em")
+
+```
+
+```{r dspindex, results='hide', echo=FALSE}
+
+es.class.survey %>%
+   select(starts_with("nep_") & ends_with("dsp")) %>%
+   zap_label() %>%
+   pivot_longer(cols = ends_with("dsp"), names_to = "Value", values_to = "Rating") %>%
+   summarise_at(vars(Rating), list(mean=mean, sd=sd, max = max, min=min), na.rm = TRUE)
+
+```
+
+```{r dspindex.pretty, echo=FALSE}
+
+es.class.survey %>%
+   select(starts_with("nep_") & ends_with("dsp")) %>%
+   zap_label() %>%
+   pivot_longer(cols = ends_with("dsp"), names_to = "Value", values_to = "Rating") %>%
+   summarise_at(vars(Rating), list(mean=mean, sd=sd, max = max, min=min), na.rm = TRUE) %>%
+   kbl(digits = 1, caption = "Dominant Social Paradigm") %>% 
+   kable_styling(full_width = F) %>%
+   column_spec(1:4, width = "15em")
+```
+
+---
+background-image: url("img/pos_map.png")
+background-position: 50% 80%
+background-size: 600pt
+
+# Mapping: Positive Sentiments
+
+---
+background-image: url("img/pos_cloud.png")
+background-position: 50% 80%
+background-size: 600pt
+
+# In Your Own Words: Positive Sentiments
+
+### (Word clouds are usually evil...)
+---
+
+background-image: url("img/neg_map.png")
+background-position: 50% 80%
+background-size: 600pt
+
+# Mapping: Negative Sentiments
 
 
 ---
+background-image: url("img/neg_cloud.png")
+background-position: 50% 80%
+background-size: 600pt
 
-# Assignment Instructions
+# In Your Own Words: Negative Sentiments
 
-## Select several variables and conduct some initial exploratory data work
+### (Word clouds are usually evil...)
+---
+# A Note about Ethics
+
+Social science research (including medicine and psychology) has a troubled and racist past: Tuskegee Syphilis Study (1932-1972); Baltimore Lead Paint Study (1990s)
+
+- **Belmont Report** defines guiding ethical principles:
+   
+   - *Respect for People*: Informed consent and protection of autonomy
+   
+   - *Beneficence*: Do no harm, and balance risks and benefits of research
+   
+   - *Justice*: Reasonable, non-exploitative, and well-considered procedure. Fairness in costs and burdens.
+
+We must review any **human subjects research** with our **Institutional Research Board** (IRB)
 
 
 ---
+# What is Research?
+
+"Research means a **systematic investigation**, including research development, testing, and evaluation, designed to develop or contribute to **generalizable knowledge**." [45 CFR 46.102](https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-A/part-46#46.102)
+
+## Historians get a Pass
+
+"For purposes of this part, the following activities are deemed not to be research:
+
+Scholarly and journalistic activities (e.g., oral history, journalism, biography, literary criticism, legal research, and historical scholarship), including the collection and use of information, that focus directly on the specific individuals about whom the information is collected."
+
+### Historians, Public Health, Criminal Investigations, and Homeland Security all exempted
+
+---
+# Is it Research on Human Subjects?
+
+"Human subjects research is a project that involves a living individual about whom the investigator (whether student or professional):
+
+(i) obtains information or biospecimens through interaction/intervention with the individual, and uses, studies, or analyzes the information or biospecimens; or 
+
+(ii) obtains, uses studies, analyzes, or **generates identifiable private information** or identifiable biospecimens." [45 CFR 46.102](https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-A/part-46#46.102)
+
+**Example:** 
+
+Ask a person how much a house costs - *Not* Human Subjects Research
+
+Ask a person if they would like to own a house - **Yes**, Human Subjects Research
+
+
+---
+# IRB Review
+
+Some types of research are exempt - BUT still require documentation.
+
+- Anonymous surveys (web panels a common example)
+
+- Surveys with identifiers - but mitigated by protections
+
+- Public observation
+- **Key**: Interpretation is squishy - often this is expedited to be safe at Reed.
+
+Expedited Review is more common - were the risk is no more than would be expected in daily life.
+
+
+**What are risks you can think of in research?**
+
+---
+class: center, middle, inverse
+
+# Let's Explore Qualtrics
