@@ -114,7 +114,9 @@ nsee2017 %>%
 **Assignment**: Share with us your thoughts on how you selected the variables and what you found. What more might you want to know about in these data? This is a short reflection, 300-400 words.
 
 
+## Stretch Goals
 
+If you want to explore other datasets from NSEE, [visit their data repository here.](https://www.openicpsr.org/openicpsr/project/100167/version/V19/view;jsessionid=BEA21F7599EA4C02CF7F1BE14EFFCE4B). Feel free to pull other data down and work with them for other analyses. 
 ```{r twoway_recode}
 
 
@@ -134,3 +136,7 @@ nsee2017 %>%
    column_spec(2:5, width = "5em") # Adjusted to fit the page
 
 ```
+
+## Step 3: Knit!
+
+The last step is to knit this Rmarkdown as a PDF. At the top of this window you are editing within you will see a ball of yarn and a needle - and the text `Knit`. Click this and it should produce a PDF of this analysis you will then turn in!
