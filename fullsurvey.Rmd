@@ -1,0 +1,57 @@
+---
+title: "Full Survey"
+output: html_document
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(pacman) # This package lets you load and install packages quickly.
+
+p_load(haven, readr, dplyr, sjmisc, labelled, srvyr, forcats, gtsummary, kableExtra)
+
+es200survey <- read_sav("data/fullsurvey.sav") 
+
+prolificdemos <- read_csv("data/prolific_export_64446a181d9a838603b34bd5.csv") %>% 
+   select('Participant id', Age, Sex, 'Ethnicity simplified')
+
+prolificdemo_pilot <- read_csv("data/prolific_export_64444758972e2749d0368a54(1).csv")%>% 
+   select('Participant id', Age, Sex, 'Ethnicity simplified')
+
+prolificdemos <- rbind(prolificdemos, prolificdemo_pilot)
+
+es200survey <- es200survey %>%
+   left_join(prolificdemos, by=c("prolificID"="Participant id")) %>%
+   select(-StartDate, -EndDate, -Status, -IPAddress, 
+          -Progress, -Duration__in_seconds_, -Finished, 
+          -RecordedDate, -RecipientLastName, -RecipientFirstName,
+          -RecipientEmail, -ExternalReference, -DistributionChannel,
+          -UserLanguage) %>%
+   mutate(Age = as.numeric(Age)) %>%
+   filter(ResponseId!="R_1NrZPaIK9rlkTjN")
+
+# Check for dupes
+prolificdemos %>% group_by(`Participant id`) %>% count() %>% filter(n>1)
+
+es200survey %>% group_by(PROLIFIC_PID) %>% count() %>% filter(n>1)
+
+
+
+```
+
+
+
+``` {r}
+
+es200survey %>%
+   select(cc_thinkabout, cc_annoyed, cc_worry, cc_nothought, cc_education, cc_threat) %>% # Change the values here!
+   mutate(across(where(is.labelled), ~as_factor(.x) %>% fct_drop)) %>% # Leave this as is
+   tbl_summary(missing = "no") %>% # Leave this as is
+   as_kable_extra(
+    booktabs = TRUE, # Makes it pretty!
+    longtable = TRUE,
+    linesep = "") %>%
+   column_spec(1, width = "20em") # Changes the width of the first column
+
+
+```
