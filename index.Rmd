@@ -24,6 +24,8 @@ options(htmltools.dir.version = FALSE)
 
 library(pacman)
 
+# Note emo required devtools::install_github("hadley/emo")
+
 p_load(emo, readxl, haven, tidyverse, sjmisc, srvyr, 
        gtsummary, kableExtra, install = TRUE)
 

@@ -51,7 +51,7 @@ class: center, middle, inverse
 
 # Day One Outline
 
-- 🕵 Why: Motivations for Surveys and Theory
+- 🕵️‍♂️ Why: Motivations for Surveys and Theory
 - ☎️ Who: Sampling and Recruitment Challenges
 - 💪 Where and How: Administering Surveys
 - ✅ What: Basics in Survey Design
@@ -120,7 +120,7 @@ background-size: 600pt
 
 --
 
--  🌐 Do you believe climate change is happening? ➡️ &lt;br&gt; **Varies by party identification**&lt;br&gt; 
+-  🌏 Do you believe climate change is happening? ➡️ &lt;br&gt; **Varies by party identification**&lt;br&gt; 
 
 -  🌲 Willingness to pay for protecting open space, expressed in dollars.  ➡️ &lt;br&gt; **Varies by visit frequency** 
 -  🐳 Hypothetical vote for expanding marine protected areas ➡️ &lt;br&gt; **Varies by perception on marine health** 
@@ -575,22 +575,38 @@ labelled::look_for(nsee2017)[1:7, ] # This is a command from the labelled packag
 ```
 
 ```
-##  pos variable           label                 col_type values               
-##  1   RSPDNUM            Respondent Number     dbl                           
-##  2   Sample             Sample Type           chr+lbl  [C] Cell             
-##                                                        [L] Land             
-##  3   version_weather_v1 Placement of weather~ chr+lbl  [A] Weather question~
-##                                                        [B] Weather question~
-##  4   version_CDR        Version and placemen~ chr+lbl  [C] With extended in~
-##                                                        [D] Without extended~
-##  5   demog_age_year     Can you please tell ~ dbl+lbl  [9999] Masked        
-##  6   AgeRecode          Age categories        dbl+lbl  [1] 18-29            
-##                                                        [2] 30-44            
-##                                                        [3] 45-64            
-##                                                        [4] Or 65 and older  
-##                                                        [98] Not Sure        
-##                                                        [99] Refused         
-##  7   demog_state        State of residence    chr
+##  pos variable           label                 col_type missing
+##  1   RSPDNUM            Respondent Number     dbl      0      
+##  2   Sample             Sample Type           chr+lbl  0      
+##                                                               
+##  3   version_weather_v1 Placement of weather~ chr+lbl  0      
+##                                                               
+##  4   version_CDR        Version and placemen~ chr+lbl  0      
+##                                                               
+##  5   demog_age_year     Can you please tell ~ dbl+lbl  0      
+##  6   AgeRecode          Age categories        dbl+lbl  39     
+##                                                               
+##                                                               
+##                                                               
+##                                                               
+##                                                               
+##  7   demog_state        State of residence    chr      0      
+##  values               
+##                       
+##  [C] Cell             
+##  [L] Land             
+##  [A] Weather question~
+##  [B] Weather question~
+##  [C] With extended in~
+##  [D] Without extended~
+##  [9999] Masked        
+##  [1] 18-29            
+##  [2] 30-44            
+##  [3] 45-64            
+##  [4] Or 65 and older  
+##  [98] Not Sure        
+##  [99] Refused         
+## 
 ```
 
 
@@ -671,7 +687,16 @@ nsee2017 %&gt;%
 ```
 
 ```
-## 39 observations missing `AgeRecode` have been removed. To include these observations, use `forcats::fct_explicit_na()` on `AgeRecode` column before passing to `tbl_svysummary()`.
+## 39 observations missing `AgeRecode` have been removed. To include these observations, use `forcats::fct_na_value_to_level()` on `AgeRecode` column before passing to `tbl_svysummary()`.
+```
+
+```
+## Warning: There were 4 warnings in `mutate()`.
+## The first warning was:
+## ℹ In argument: `df_stats = pmap(...)`.
+## Caused by warning in `svymean.survey.design2()`:
+## ! Sample size greater than population size: are weights correctly scaled?
+## ℹ Run `dplyr::last_dplyr_warnings()` to see the 3 remaining warnings.
 ```
 ---
 
@@ -679,7 +704,16 @@ nsee2017 %&gt;%
 
 
 ```
-## 39 observations missing `AgeRecode` have been removed. To include these observations, use `forcats::fct_explicit_na()` on `AgeRecode` column before passing to `tbl_svysummary()`.
+## 39 observations missing `AgeRecode` have been removed. To include these observations, use `forcats::fct_na_value_to_level()` on `AgeRecode` column before passing to `tbl_svysummary()`.
+```
+
+```
+## Warning: There were 4 warnings in `mutate()`.
+## The first warning was:
+## ℹ In argument: `df_stats = pmap(...)`.
+## Caused by warning in `svymean.survey.design2()`:
+## ! Sample size greater than population size: are weights correctly scaled?
+## ℹ Run `dplyr::last_dplyr_warnings()` to see the 3 remaining warnings.
 ```
 
 &lt;table style="NAborder-bottom: 0;"&gt;
@@ -783,7 +817,7 @@ class: center, middle, inverse
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Strongly disagree &lt;/td&gt;
-   &lt;td style="text-align:center;width: 10em; "&gt; 2 (6.2%) &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 2 (6.3%) &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Somewhat disagree &lt;/td&gt;
@@ -875,7 +909,7 @@ class: center, middle, inverse
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Somewhat disagree &lt;/td&gt;
-   &lt;td style="text-align:center;width: 10em; "&gt; 4 (12%) &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 4 (13%) &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Somewhat agree &lt;/td&gt;
@@ -1050,7 +1084,7 @@ background-size: 300pt
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Strongly disagree &lt;/td&gt;
-   &lt;td style="text-align:center;width: 10em; "&gt; 2 (6.2%) &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 2 (6.3%) &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Somewhat disagree &lt;/td&gt;
@@ -1110,7 +1144,7 @@ background-size: 300pt
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Strongly agree &lt;/td&gt;
-   &lt;td style="text-align:center;width: 10em; "&gt; 2 (6.2%) &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 2 (6.3%) &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Unknown &lt;/td&gt;
@@ -1154,7 +1188,7 @@ background-size: 300pt
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Strongly agree &lt;/td&gt;
-   &lt;td style="text-align:center;width: 10em; "&gt; 20 (62%) &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 20 (63%) &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Unknown &lt;/td&gt;
@@ -1193,7 +1227,7 @@ background-size: 300pt
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Somewhat agree &lt;/td&gt;
-   &lt;td style="text-align:center;width: 10em; "&gt; 4 (12%) &lt;/td&gt;
+   &lt;td style="text-align:center;width: 10em; "&gt; 4 (13%) &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
    &lt;td style="text-align:left;padding-left: 2em;" indentlevel="1"&gt; Strongly agree &lt;/td&gt;
